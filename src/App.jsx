@@ -11,6 +11,7 @@ const TOOLS=['Go','Rust','C/C++','Python','JavaScript','Node.js','React','Next.j
 const TOD=(h=>h<5||h>=20?'night':h<8?'dawn':h<17?'day':'dusk')(new Date().getHours())
 const initTheme=()=>{try{const t=localStorage.getItem('theme');if(t)return t}catch{}
   return TOD==='night'?'dark':'light'}
+const initCalm=()=>{try{const c=localStorage.getItem('calm');if(c)return c==='on'}catch{}return matchMedia('(prefers-reduced-motion: reduce)').matches}
 const getRoute=()=>location.hash.replace(/^#/,'')||'/'
 const nav=p=>{location.hash='#'+p}
 
@@ -40,20 +41,20 @@ function Project({p,i}){
 }
 
 export default function App(){
-  const [theme,setTheme]=useState(initTheme),[g5,setG5]=useState(false),[route,setRoute]=useState(getRoute),ring=useRef(null)
+  const [theme,setTheme]=useState(initTheme),[g5,setG5]=useState(false),[route,setRoute]=useState(getRoute),ring=useRef(null),termNav=useRef(false),first=useRef(true),[calm,setCalm]=useState(initCalm)
   const toggleTheme=()=>setTheme(t=>t==='dark'?'light':'dark')
   useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.dataset.tod=TOD;try{localStorage.setItem('theme',theme)}catch{}},[theme])
   useEffect(()=>{
     let i=0
     const hc=()=>{setRoute(getRoute());scrollTo(0,0)}
     const kd=e=>{i=e.key===KONAMI[i]?i+1:(e.key===KONAMI[0]?1:0);if(i===KONAMI.length){setG5(v=>!v);i=0}}
-    const mv=e=>{const r=ring.current;if(!r)return;r.style.opacity=1;r.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;r.classList.toggle('big',!!e.target.closest('a,button,summary,input'))}
+    const mv=e=>{const r=ring.current;if(!r)return;r.style.opacity=e.target.closest('a,button,summary,input,label,.row')?1:0;r.style.transform=`translate(${e.clientX}px,${e.clientY}px)`;r.classList.toggle('big',!!e.target.closest('a,button,summary,input'))}
     addEventListener('hashchange',hc);addEventListener('keydown',kd);addEventListener('mousemove',mv)
     return()=>{removeEventListener('hashchange',hc);removeEventListener('keydown',kd);removeEventListener('mousemove',mv)}
   },[])
   useEffect(()=>{
     let last=null
-    const mv=e=>{const t=e.target.closest?.('.links a,.go,.nav button,.avatar')
+    const mv=e=>{if(document.documentElement.dataset.calm==='on')return;const t=e.target.closest?.('.links a,.go,.nav button,.avatar')
       if(last&&last!==t){last.style.transform='';last=null}
       if(!t)return
       const r=t.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5
@@ -62,7 +63,12 @@ export default function App(){
   useEffect(()=>{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12})
     document.querySelectorAll('.rv').forEach(n=>io.observe(n));return()=>io.disconnect()},[route])
 
-  const tp={route,nav,toggleTheme,party:()=>setG5(v=>!v)}
+  useEffect(()=>{document.documentElement.dataset.calm=calm?'on':'off';try{localStorage.setItem('calm',calm?'on':'off')}catch{}},[calm])
+  useEffect(()=>{const n=projects.find(p=>p.slug===route.split('/')[2])?.name;document.title=route==='/'?'Varadraj | Systems Engineer':`${n||route.slice(1)} | Varadraj`
+    if(first.current){first.current=false;return}
+    if(termNav.current){termNav.current=false;setTimeout(()=>document.getElementById('ti')?.focus({preventScroll:true}),80);return}
+    document.getElementById('main')?.focus({preventScroll:true})},[route])
+  const tp={route,nav:p=>{termNav.current=true;nav(p)},toggleTheme,toggleCalm:()=>setCalm(c=>!c),party:()=>setG5(v=>!v)}
   const resume=me.links.find(l=>l.l.startsWith('Resume')).h
   const slug=route.split('/')[2],pi=projects.findIndex(p=>p.slug===slug)
   let page,home=route==='/'
@@ -93,13 +99,14 @@ export default function App(){
   const cur=s=>route.startsWith(s)?'page':undefined
   return(
     <div className={g5?'g5':''}>
+      <a className="skip" href="#main" onClick={e=>{e.preventDefault();document.getElementById('main')?.focus()}}>Skip to content</a>
       <div className="ring" ref={ring} aria-hidden="true"/>
       <Ink/>
       <header className="nav"><a href="#/" className="logo">{me.handle}</a>
         <nav aria-label="Pages">{['projects','about','contact'].map(s=><a key={s} href={`#/${s}`} aria-current={cur('/'+s)}>{s}</a>)}
           <button onClick={toggleTheme} aria-label={`Switch to ${theme==='dark'?'light':'dark'} mode`}>{theme==='dark'?'Light':'Dark'}</button></nav></header>
-      <main key={route} className="page">{page}</main>
-      <footer className="wrap">Built with React and Vite. The palette follows your local time ({TOD}). Press ` for the terminal, or try the Konami code.</footer>
+      <main id="main" tabIndex={-1} key={route} className="page">{page}</main>
+      <footer className="wrap">Built with React and Vite. The palette follows your local time ({TOD}). Press ` for the terminal, or try the Konami code. <button className="calm" onClick={()=>setCalm(c=>!c)} aria-pressed={calm}>Calm mode: {calm?'on':'off'}</button></footer>
       {!home&&<Terminal {...tp} dock/>}
     </div>)
 }

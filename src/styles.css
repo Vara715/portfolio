@@ -1,4 +1,4 @@
-:root{--bg:#f3e9d2;--paper:#fbf5e6;--ink:#1d140c;--mute:#6a5a46;--accent:#b3261e;--sea:#1f4e6b;--line:rgba(29,20,12,.22);--shadow:rgba(29,20,12,.2)}
+:root{--bg:#f3e9d2;--paper:#fbf5e6;--ink:#1d140c;--mute:#5c4d3a;--accent:#b3261e;--sea:#1f4e6b;--line:rgba(29,20,12,.22);--shadow:rgba(29,20,12,.2)}
 [data-theme=dark]{--bg:#0c1a24;--paper:#12293a;--ink:#f1e6c8;--mute:#a9a086;--accent:#f2b632;--sea:#7cc0d0;--line:rgba(241,230,200,.22);--shadow:rgba(0,0,0,.5)}
 *{box-sizing:border-box}html{scroll-padding-top:70px}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.65 Figtree,system-ui,sans-serif;padding-bottom:3.2rem;transition:background .3s,color .3s}
@@ -80,7 +80,7 @@ footer{padding-top:5rem;padding-bottom:3rem;color:var(--mute);font-size:.9rem}
 .shot div{margin-top:2.5rem;border:2px dashed var(--line);border-radius:8px;padding:2rem;text-align:center;color:var(--mute);font:.85rem 'JetBrains Mono',monospace}
 @media(max-width:760px){.viz{grid-template-columns:1fr}}
 /* v5: time of day, ink, seal, tactile, drawn paths */
-:root[data-theme=light][data-tod=dawn]{--bg:#f7e3d3;--paper:#fdf1e6;--accent:#c23b2c;--sea:#4b5f8a}
+:root[data-theme=light][data-tod=dawn]{--bg:#f7e3d3;--paper:#fdf1e6;--accent:#b0301f;--sea:#4b5f8a}
 :root[data-theme=light][data-tod=dusk]{--bg:#f0d6b4;--paper:#f8e6cb;--accent:#a8321f;--sea:#6a4378}
 .ink{position:fixed;inset:0;pointer-events:none;z-index:98}
 @keyframes bleed{from{filter:blur(16px);opacity:0;letter-spacing:.07em}}
@@ -105,3 +105,11 @@ footer{padding-top:5rem;padding-bottom:3rem;color:var(--mute);font-size:.9rem}
 .trail li.on{opacity:1}.trail li.on::before{background:var(--accent);border-color:var(--accent);transform:scale(1.3)}
 .trail p{margin:.2rem 0 0;color:var(--mute)}
 @media(max-width:760px){.seal{position:static;margin-bottom:1rem;width:72px;height:72px}}
+/* v6: accessibility, calm mode */
+.skip{position:absolute;left:1rem;top:-4rem;z-index:200;background:var(--ink);color:var(--bg);padding:.6rem 1rem;border-radius:6px;text-decoration:none}.skip:focus{top:.6rem}
+main:focus{outline:none}.term:focus-within{outline:3px solid var(--accent);outline-offset:3px}
+.calm{margin-left:.6rem;font-size:.8rem}
+[data-calm=on] .ink,[data-calm=on] .ring{display:none}
+[data-calm=on] *{animation:none!important;transition:none!important}
+[data-calm=on] .rv{opacity:1;transform:none}[data-calm=on] .rv h2{filter:none;opacity:1}
+[data-calm=on] .arch .d{stroke-dashoffset:0}[data-calm=on] .arch .t{opacity:1}

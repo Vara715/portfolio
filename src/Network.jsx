@@ -3,9 +3,10 @@ const T=[['projects','/projects'],['about','/about'],['contact','/contact'],['p2
 export default function Network({nav}){
   const cv=useRef()
   useEffect(()=>{
-    const c=cv.current,x=c.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1),still=matchMedia('(prefers-reduced-motion: reduce)').matches
+    const c=cv.current,x=c.getContext('2d'),dpr=Math.min(2,devicePixelRatio||1),rm=matchMedia('(prefers-reduced-motion: reduce)').matches
     let W,H,N=[],m={x:-999,y:-999},path=null,raf
     const d=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y),col=n=>getComputedStyle(document.documentElement).getPropertyValue(n)
+    let C;const setC=()=>{C={ink:col('--ink'),ac:col('--accent'),sea:col('--sea')}};setC();const mo=new MutationObserver(setC);mo.observe(document.documentElement,{attributes:true})
     const init=()=>{const r=c.getBoundingClientRect();W=r.width;H=r.height;c.width=W*dpr;c.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0)
       N=Array.from({length:W<640?16:30},(_,i)=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,t:T[i],adj:new Set()}))
       N.forEach((a,i)=>N.filter(b=>b!==a).sort((p,q)=>d(a,p)-d(a,q)).slice(0,3).forEach(b=>{a.adj.add(b);b.adj.add(a)}))}
@@ -15,11 +16,11 @@ export default function Network({nav}){
     const hit=e=>{const r=c.getBoundingClientRect(),p={x:e.clientX-r.left,y:e.clientY-r.top};return N.find(a=>a.t&&d(a,p)<22)}
     const mm=e=>{const r=c.getBoundingClientRect();m={x:e.clientX-r.left,y:e.clientY-r.top};c.style.cursor=hit(e)?'pointer':'default'}
     const ck=e=>{const n=hit(e);if(n&&!path)route(n)}
-    let vis=true;new IntersectionObserver(([e])=>{vis=e.isIntersecting}).observe(c)
+    let vis=true;const io=new IntersectionObserver(([e])=>{vis=e.isIntersecting});io.observe(c)
     const frame=now=>{
       if(!vis){raf=requestAnimationFrame(frame);return}
-      x.clearRect(0,0,W,H);const ink=col('--ink'),ac=col('--accent'),sea=col('--sea')
-      N.forEach(a=>{if(still)return;a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1
+      x.clearRect(0,0,W,H);const {ink,ac,sea}=C
+      N.forEach(a=>{if(rm||document.documentElement.dataset.calm==='on')return;a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1
         const dx=a.x-m.x,dy=a.y-m.y,r=Math.hypot(dx,dy);if(r>0&&r<110){a.x+=dx/r*(110-r)*.04;a.y+=dy/r*(110-r)*.04}})
       x.lineWidth=1;x.strokeStyle=ink;x.globalAlpha=.2
       N.forEach(a=>a.adj.forEach(b=>{x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}))
@@ -35,7 +36,7 @@ export default function Network({nav}){
       raf=requestAnimationFrame(frame)}
     init();raf=requestAnimationFrame(frame)
     c.addEventListener('mousemove',mm);c.addEventListener('mouseleave',()=>m={x:-999,y:-999});c.addEventListener('click',ck);addEventListener('resize',init)
-    return()=>{cancelAnimationFrame(raf);removeEventListener('resize',init)}
+    return()=>{mo.disconnect();io.disconnect();cancelAnimationFrame(raf);removeEventListener('resize',init)}
   },[])
   return <canvas ref={cv} className="net" aria-hidden="true"/>
 }

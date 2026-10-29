@@ -6,9 +6,9 @@ const store={lines:[],open:true,best:0,hist:[]}
 const PATHS=['','about','projects','contact',...projects.map(p=>'projects/'+p.slug)]
 const LS={'':['about/','projects/','contact/'],about:['story.md','education.md','skills.md'],projects:projects.map(p=>p.slug+'/'),contact:['links.md']}
 const SEC={about:'about',skills:'about',education:'about',projects:'projects',contact:'contact',home:''}
-const HELP=['cd <page>      go to a page: cd about, cd projects/p2p, cd .., cd ~','ls, pwd       look around','cat <project>  summary of a project (p2p, bank, github-bounty)','open <project> open a live demo; open github, open linkedin','neofetch      about me at a glance','run           play the runner game','theme, sound  switch theme, toggle sound','tree, cat resume, ping, history, clear, help','Some commands are hidden. Try your luck.']
+const HELP=['cd <page>      go to a page: cd about, cd projects/p2p, cd .., cd ~','ls, pwd       look around','cat <project>  summary of a project (p2p, bank, github-bounty)','open <project> open a live demo; open github, open linkedin','neofetch      about me at a glance','run           play the runner game','theme, sound, calm  switch theme, toggle sound, calm mode','tree, cat resume, ping, history, clear, help','Some commands are hidden. Try your luck.']
 
-export default function Terminal({route,nav,toggleTheme,party,dock}){
+export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
   const cwd=route.replace(/^\//,'')
   const [lines,setL]=useState(store.lines),[val,setVal]=useState(''),[open,setOpen]=useState(store.open),[play,setPlay]=useState(false)
   const snd=useRef(false),ac=useRef(null),body=useRef(null),inp=useRef(null),hi=useRef(store.hist.length)
@@ -60,6 +60,7 @@ export default function Terminal({route,nav,toggleTheme,party,dock}){
       case 'tree':return out('portfolio','|-- about','|-- contact','`-- projects',...projects.map((p,i)=>'    '+(i===projects.length-1?'`-- ':'|-- ')+p.slug))
       case 'ping':return out('PING vara715 (static site): 64 bytes, time=0.4 ms','0% packet loss. Fast, because there is no server to wait for.')
       case 'ssh':return out('ssh: permission denied (publickey). Try hiring me instead: cd contact')
+      case 'calm':toggleCalm();return out('Calm mode toggled.')
       case 'date':return out(new Date().toString())
       case 'echo':return out(args.join(' '))
       case 'theme':toggleTheme();return out('Theme switched.')
