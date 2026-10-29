@@ -6,7 +6,7 @@ Built for the **Portfolio Design Hackathon 2026** (Skillinf, on Unstop).
 
 ![Portfolio preview](public/og.png)
 
-**Live site:** https://your-site-url
+**Live site:** https://portfolio-theta-inky-86.vercel.app/
 
 ---
 
