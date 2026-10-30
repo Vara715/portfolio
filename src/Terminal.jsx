@@ -1,8 +1,9 @@
 import {useEffect,useRef,useState} from 'react'
 import Runner from './Runner'
+import Matrix from './Matrix'
 import {me,projects,education} from './data'
 
-const store={lines:[],open:true,best:0,hist:[]}
+const store={lines:[],open:true,best:0,hist:[],rain:false}
 const PATHS=['','about','projects','contact',...projects.map(p=>'projects/'+p.slug)]
 const LS={'':['about/','projects/','contact/'],about:['story.md','education.md','skills.md'],projects:projects.map(p=>p.slug+'/'),contact:['links.md']}
 const SEC={about:'about',skills:'about',education:'about',projects:'projects',contact:'contact',home:''}
@@ -10,9 +11,11 @@ const HELP=['cd <page>      go to a page: cd about, cd projects/p2p, cd .., cd ~
 
 export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
   const cwd=route.replace(/^\//,'')
-  const [lines,setL]=useState(store.lines),[val,setVal]=useState(''),[open,setOpen]=useState(store.open),[play,setPlay]=useState(false)
+  const [lines,setL]=useState(store.lines),[val,setVal]=useState(''),[open,setOpen]=useState(store.open),[play,setPlay]=useState(false),[rain,setRain]=useState(store.rain)
   const snd=useRef(false),ac=useRef(null),body=useRef(null),inp=useRef(null),hi=useRef(store.hist.length)
   const out=(...t)=>setL(l=>(store.lines=[...l,...t]))
+  const startRain=()=>{store.rain=true;setRain(true)}
+  const stopRain=()=>{store.rain=false;setRain(false);out('^C');setTimeout(()=>inp.current?.focus(),50)}
   const prompt=`${me.handle}@portfolio:~${cwd?'/'+cwd:''}$`
 
   useEffect(()=>{
@@ -61,6 +64,7 @@ export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
       case 'ping':return out('PING vara715 (static site): 64 bytes, time=0.4 ms','0% packet loss. Fast, because there is no server to wait for.')
       case 'ssh':return out('ssh: permission denied (publickey). Try hiring me instead: cd contact')
       case 'calm':toggleCalm();return out('Calm mode toggled.')
+      case 'cmatrix':if(document.documentElement.dataset.calm==='on')return out('cmatrix: calm mode is on. Type calm to turn effects back on.');startRain();return out('Wake up, visitor... (Ctrl+C to exit)')
       case 'date':return out(new Date().toString())
       case 'echo':return out(args.join(' '))
       case 'theme':toggleTheme();return out('Theme switched.')
@@ -84,13 +88,13 @@ export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
   return(
     <div className={`term${dock?' dock':''}${dock&&!open?' closed':''}`} role="region" aria-label="Interactive terminal" onClick={()=>!play&&inp.current?.focus()}>
       <div className="bar" onClick={()=>dock&&setOpen(o=>(store.open=!o))}><i/><i/><i/><span>~{cwd?'/'+cwd:''}{dock?'   (press ` to toggle)':''}</span></div>
-      <div className="tb" ref={body} aria-live="polite">
-        {lines.map((l,i)=><p key={i} className={l.startsWith(me.handle+'@')?'cmd':''}>{l}</p>)}
+      <div className="tb" ref={body} aria-live={rain?'off':'polite'}>
+        {rain?<Matrix onExit={stopRain}/>:<>{lines.map((l,i)=><p key={i} className={l.startsWith(me.handle+'@')?'cmd':''}>{l}</p>)}
         {play?<Runner onEnd={end}/>:
         <form onSubmit={e=>{e.preventDefault();run(val);setVal('')}}>
           <label htmlFor="ti" className="sr">Type a command</label><span>{prompt}</span>
           <input id="ti" ref={inp} value={val} onChange={e=>setVal(e.target.value)} onKeyDown={onKey} autoComplete="off" autoCapitalize="off" spellCheck="false" placeholder="type help"/>
-        </form>}
+        </form>}</>}
       </div>
     </div>)
 }
