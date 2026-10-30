@@ -113,3 +113,13 @@ main:focus{outline:none}.term:focus-within{outline:3px solid var(--accent);outli
 [data-calm=on] *{animation:none!important;transition:none!important}
 [data-calm=on] .rv{opacity:1;transform:none}[data-calm=on] .rv h2{filter:none;opacity:1}
 [data-calm=on] .arch .d{stroke-dashoffset:0}[data-calm=on] .arch .t{opacity:1}
+/* v7: scrubber, intro, portrait eyes, resume, print */
+.scrub{display:flex;align-items:center;gap:.5rem;font:.8rem 'JetBrains Mono',monospace;color:var(--mute)}
+.scrub input{width:90px;accent-color:var(--accent)}.scrub button{font-size:.75rem;padding:.05rem .6rem}
+.scrub.ft{display:none;margin-top:.8rem}@media(max-width:760px){.scrub.nv{display:none}.scrub.ft{display:flex}}
+.intro{position:fixed;inset:0;z-index:400;background:var(--bg);display:grid;place-items:center;align-content:center;gap:.8rem;animation:introOut .5s 1.5s ease both}
+.intro h1{font-size:clamp(3.5rem,14vw,9rem);animation:bleed 1.1s ease-out both}
+.intro p{margin:0;font:.9rem 'JetBrains Mono',monospace;color:var(--mute);animation:up .8s .6s both}
+@keyframes introOut{to{opacity:0;visibility:hidden}}
+.rs{margin:1.2rem 0}
+@media print{.nav,footer,.ink,.ring,.term,.skip,.links,.intro{display:none!important}body{background:#fff;color:#000}.rv{opacity:1!important;transform:none!important}.rv h2{filter:none!important;opacity:1!important}}

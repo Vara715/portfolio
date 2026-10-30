@@ -4,9 +4,10 @@ import Matrix from './Matrix'
 import {me,projects,education} from './data'
 
 const store={lines:[],open:true,best:0,hist:[],rain:false}
-const PATHS=['','about','projects','contact',...projects.map(p=>'projects/'+p.slug)]
-const LS={'':['about/','projects/','contact/'],about:['story.md','education.md','skills.md'],projects:projects.map(p=>p.slug+'/'),contact:['links.md']}
-const SEC={about:'about',skills:'about',education:'about',projects:'projects',contact:'contact',home:''}
+const PATHS=['','about','projects','contact','resume',...projects.map(p=>'projects/'+p.slug)]
+const LS={'':['about/','projects/','resume/','contact/'],about:['story.md','education.md','skills.md'],projects:projects.map(p=>p.slug+'/'),contact:['links.md']}
+const SEC={resume:'resume',about:'about',skills:'about',education:'about',projects:'projects',contact:'contact',home:''}
+const FORT=['There are only two hard things in computer science: cache invalidation and naming things. (Phil Karlton)','Premature optimization is the root of all evil. (Donald Knuth)','Make it work, make it right, make it fast. (Kent Beck)','Talk is cheap. Show me the code. (Linus Torvalds)','Simplicity is prerequisite for reliability. (Edsger Dijkstra)']
 const HELP=['cd <page>      go to a page: cd about, cd projects/p2p, cd .., cd ~','ls, pwd       look around','cat <project>  summary of a project (p2p, bank, github-bounty)','open <project> open a live demo; open github, open linkedin','neofetch      about me at a glance','run           play the runner game','theme, sound, calm  switch theme, toggle sound, calm mode','tree, cat resume, ping, history, clear, help','Some commands are hidden. Try your luck.']
 
 export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
@@ -65,6 +66,12 @@ export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
       case 'ssh':return out('ssh: permission denied (publickey). Try hiring me instead: cd contact')
       case 'calm':toggleCalm();return out('Calm mode toggled.')
       case 'cmatrix':if(document.documentElement.dataset.calm==='on')return out('cmatrix: calm mode is on. Type calm to turn effects back on.');startRain();return out('Wake up, visitor... (Ctrl+C to exit)')
+      case 'fortune':return out(FORT[Math.floor(Math.random()*FORT.length)])
+      case 'cowsay':{const t=args.join(' ')||'moo',b='-'.repeat(t.length+2);return out(' '+b,`< ${t} >`,' '+b,'        \\   ^__^','         \\  (oo)\\_______','            (__)\\       )\\/\\','                ||----w |','                ||     ||')}
+      case 'sl':{if(document.documentElement.dataset.calm==='on')return out('sl: calm mode is on. Type calm to turn effects back on.')
+        out('');let i=0;const tr='__/[_]==[_]==[_]=o>'
+        const set=s=>setL(l=>{const n=[...l];n[n.length-1]=s;store.lines=n;return n})
+        const id=setInterval(()=>{i++;set(' '.repeat(i)+tr);if(i>46){clearInterval(id);set('choo choo.')}},70);return}
       case 'date':return out(new Date().toString())
       case 'echo':return out(args.join(' '))
       case 'theme':toggleTheme();return out('Theme switched.')

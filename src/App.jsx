@@ -8,7 +8,8 @@ const ach=achievements.filter(a=>import.meta.env.DEV||!a.d.startsWith('TODO'))
 
 const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']
 const TOOLS=['Go','Rust','C/C++','Python','JavaScript','Node.js','React','Next.js','gRPC','Kademlia DHT','Redis','MongoDB','Docker','AWS EC2','Linux','System design','Distributed systems']
-const TOD=(h=>h<5||h>=20?'night':h<8?'dawn':h<17?'day':'dusk')(new Date().getHours())
+const todOf=h=>h<5||h>=20?'night':h<8?'dawn':h<17?'day':'dusk'
+const TOD=todOf(new Date().getHours())
 const initTheme=()=>{try{const t=localStorage.getItem('theme');if(t)return t}catch{}
   return TOD==='night'?'dark':'light'}
 const initCalm=()=>{try{const c=localStorage.getItem('calm');if(c)return c==='on'}catch{}return matchMedia('(prefers-reduced-motion: reduce)').matches}
@@ -40,10 +41,18 @@ function Project({p,i}){
       <p className="links"><a href={`#/projects/${next.slug}`}>Next: {next.name}</a></p></div></article>)
 }
 
+const Scrub=({hour,onChange,onAuto,cls})=>(<div className={'scrub '+cls}><span>Time</span><input type="range" min="0" max="23" value={hour??new Date().getHours()} onChange={onChange} aria-label="Preview the palette at a different time of day"/><button onClick={onAuto}>Auto</button></div>)
+function Intro({onDone}){
+  useEffect(()=>{const t=setTimeout(onDone,2000),k=e=>{if(e.key==='Escape')onDone()};addEventListener('keydown',k);return()=>{clearTimeout(t);removeEventListener('keydown',k)}},[])
+  return(<div className="intro" role="status"><h1>{me.name}</h1><p>booting portfolio ...</p><button onClick={onDone}>Skip</button></div>)
+}
 export default function App(){
-  const [theme,setTheme]=useState(initTheme),[g5,setG5]=useState(false),[route,setRoute]=useState(getRoute),ring=useRef(null),termNav=useRef(false),first=useRef(true),[calm,setCalm]=useState(initCalm)
+  const [theme,setTheme]=useState(initTheme),[g5,setG5]=useState(false),[route,setRoute]=useState(getRoute),ring=useRef(null),termNav=useRef(false),first=useRef(true),[calm,setCalm]=useState(initCalm),[hour,setHour]=useState(null),[intro,setIntro]=useState(()=>{try{return !sessionStorage.getItem('intro')&&!initCalm()}catch{return false}})
   const toggleTheme=()=>setTheme(t=>t==='dark'?'light':'dark')
-  useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.dataset.tod=TOD;try{localStorage.setItem('theme',theme)}catch{}},[theme])
+  const tod=todOf(hour??new Date().getHours())
+  const scrub=e=>{const v=+e.target.value;setHour(v);setTheme(todOf(v)==='night'?'dark':'light')}
+  const auto=()=>{setHour(null);setTheme(todOf(new Date().getHours())==='night'?'dark':'light')}
+  useEffect(()=>{document.documentElement.dataset.theme=theme;document.documentElement.dataset.tod=tod;try{localStorage.setItem('theme',theme)}catch{}},[theme,tod])
   useEffect(()=>{
     let i=0
     const hc=()=>{setRoute(getRoute());scrollTo(0,0)}
@@ -94,19 +103,27 @@ export default function App(){
     <Sec n="Education" t={education.school}><p className="prose">{education.degree}, {education.cgpa}. {education.where}, {education.when}.</p></Sec>
     {ach.length>0&&<Sec n="Achievements" t="Open source and beyond">{ach.map(a=><a key={a.t} className="row" href={a.h}><span className="n">+</span><div><h3>{a.t}</h3><p>{a.d}</p></div></a>)}</Sec>}
     <Sec n="Skills" t="What I work with"><div className="crew">{Object.entries(skills).map(([g,it])=><div key={g}><h3>{g}</h3><ul>{it.map(s=><li key={s}>{s}</li>)}</ul></div>)}</div></Sec></section></div>
+  else if(route==='/resume')page=<div className="wrap"><section><h1 className="h1s">Resume</h1>
+    <p className="links"><a href={resume}>Download PDF</a><a href="#/resume" onClick={e=>{e.preventDefault();print()}}>Print</a></p>
+    <Sec n="Education" t={education.school}><p className="prose">{education.degree}, {education.cgpa}. {education.where}, {education.when}.</p></Sec>
+    <Sec n="Projects" t="Selected projects">{[...projects,{...also,how:[also.line]}].map(p=><div key={p.name} className="rs"><h3>{p.name}</h3><p className="where">{p.stack.join(', ')}</p><ul className="prose">{p.how.map(h=><li key={h}>{h}</li>)}</ul></div>)}</Sec>
+    <Sec n="Skills" t="Technical skills">{Object.entries(skills).map(([g,it])=><p key={g} className="prose"><strong>{g}:</strong> {it.join(', ')}</p>)}</Sec>
+    {ach.length>0&&<Sec n="Open source" t="Achievements">{ach.map(a=><p key={a.t} className="prose"><strong>{a.t}.</strong> {a.d}</p>)}</Sec>}</section></div>
   else if(route==='/contact')page=<div className="wrap"><section><h1 className="h1s">Let's talk</h1><p className="intro">Hiring, collaborating or just saying hi? Pick a link.</p><p className="links">{me.links.map(l=><a key={l.l} href={l.h}>{l.l}</a>)}</p></section></div>
   else page=<div className="wrap"><section><h1 className="h1s">Page not found</h1><p className="intro">Nothing lives at {route}.</p><p className="links"><a href="#/">Go home</a></p></section></div>
   const cur=s=>route.startsWith(s)?'page':undefined
   return(
     <div className={g5?'g5':''}>
       <a className="skip" href="#main" onClick={e=>{e.preventDefault();document.getElementById('main')?.focus()}}>Skip to content</a>
+      {intro&&<Intro onDone={()=>{try{sessionStorage.setItem('intro','1')}catch{};setIntro(false)}}/>}
       <div className="ring" ref={ring} aria-hidden="true"/>
       <Ink/>
       <header className="nav"><a href="#/" className="logo">{me.handle}</a>
-        <nav aria-label="Pages">{['projects','about','contact'].map(s=><a key={s} href={`#/${s}`} aria-current={cur('/'+s)}>{s}</a>)}
+        <nav aria-label="Pages">{['projects','about','resume','contact'].map(s=><a key={s} href={`#/${s}`} aria-current={cur('/'+s)}>{s}</a>)}
+          <Scrub cls="nv" hour={hour} onChange={scrub} onAuto={auto}/>
           <button onClick={toggleTheme} aria-label={`Switch to ${theme==='dark'?'light':'dark'} mode`}>{theme==='dark'?'Light':'Dark'}</button></nav></header>
       <main id="main" tabIndex={-1} key={route} className="page">{page}</main>
-      <footer className="wrap">Built with React and Vite. The palette follows your local time ({TOD}). Press ` for the terminal, or try the Konami code. <button className="calm" onClick={()=>setCalm(c=>!c)} aria-pressed={calm}>Calm mode: {calm?'on':'off'}</button></footer>
+      <footer className="wrap">Built with React and Vite. The palette follows your local time ({tod}). Press ` for the terminal, or try the Konami code. <button className="calm" onClick={()=>setCalm(c=>!c)} aria-pressed={calm}>Calm mode: {calm?'on':'off'}</button><Scrub cls="ft" hour={hour} onChange={scrub} onAuto={auto}/></footer>
       {!home&&<Terminal {...tp} dock/>}
     </div>)
 }
