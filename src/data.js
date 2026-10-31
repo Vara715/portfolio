@@ -32,3 +32,5 @@ export const achievements=[
  {t:'Open source: Rust',d:'Fixed a rustc stack-overflow crash in the return-type-notation refinement check (rust-lang/rust #163866, merged).',h:'https://github.com/rust-lang/rust/pull/164227'},
  {t:'Competitive programming',d:'1603 rated on Leetcode',h:'https://leetcode.com/u/Varadraj56/'},
  {t:'Research',d:'Published papers in IEEE, in 2 conferences',h:'#'}]
+
+export const chess={user:'Vir_45',best:{title:'A game I like',why:'One line on why this game matters',gameId:'174224823726',pgn:'',link:'https://www.chess.com/game/live/174224823726'}}

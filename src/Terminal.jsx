@@ -4,9 +4,9 @@ import Matrix from './Matrix'
 import {me,projects,education} from './data'
 
 const store={lines:[],open:true,best:0,hist:[],rain:false}
-const PATHS=['','about','projects','contact','resume',...projects.map(p=>'projects/'+p.slug)]
-const LS={'':['about/','projects/','resume/','contact/'],about:['story.md','education.md','skills.md'],projects:projects.map(p=>p.slug+'/'),contact:['links.md']}
-const SEC={resume:'resume',about:'about',skills:'about',education:'about',projects:'projects',contact:'contact',home:''}
+const PATHS=['','about','projects','contact','resume','chess',...projects.map(p=>'projects/'+p.slug)]
+const LS={'':['about/','projects/','resume/','chess/','contact/'],about:['story.md','education.md','skills.md'],projects:projects.map(p=>p.slug+'/'),contact:['links.md']}
+const SEC={chess:'chess',resume:'resume',about:'about',skills:'about',education:'about',projects:'projects',contact:'contact',home:''}
 const FORT=['There are only two hard things in computer science: cache invalidation and naming things. (Phil Karlton)','Premature optimization is the root of all evil. (Donald Knuth)','Make it work, make it right, make it fast. (Kent Beck)','Talk is cheap. Show me the code. (Linus Torvalds)','Simplicity is prerequisite for reliability. (Edsger Dijkstra)']
 const HELP=['cd <page>      go to a page: cd about, cd projects/p2p, cd .., cd ~','ls, pwd       look around','cat <project>  summary of a project (p2p, bank, github-bounty)','open <project> open a live demo; open github, open linkedin','neofetch      about me at a glance','run           play the runner game','theme, sound, calm  switch theme, toggle sound, calm mode','tree, cat resume, ping, history, clear, help','Some commands are hidden. Try your luck.']
 

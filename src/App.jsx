@@ -3,6 +3,7 @@ import Terminal from './Terminal'
 import Network from './Network'
 import {Kad,Ledger,Shot,Arch,Trail} from './Viz'
 import Ink from './Ink'
+import ChessPage from './Chess'
 import {me,projects,also,education,skills,achievements} from './data'
 const ach=achievements.filter(a=>import.meta.env.DEV||!a.d.startsWith('TODO'))
 
@@ -103,6 +104,7 @@ export default function App(){
     <Sec n="Education" t={education.school}><p className="prose">{education.degree}, {education.cgpa}. {education.where}, {education.when}.</p></Sec>
     {ach.length>0&&<Sec n="Achievements" t="Open source and beyond">{ach.map(a=><a key={a.t} className="row" href={a.h}><span className="n">+</span><div><h3>{a.t}</h3><p>{a.d}</p></div></a>)}</Sec>}
     <Sec n="Skills" t="What I work with"><div className="crew">{Object.entries(skills).map(([g,it])=><div key={g}><h3>{g}</h3><ul>{it.map(s=><li key={s}>{s}</li>)}</ul></div>)}</div></Sec></section></div>
+  else if(route==='/chess')page=<div className="wrap"><ChessPage/></div>
   else if(route==='/resume')page=<div className="wrap"><section><h1 className="h1s">Resume</h1>
     <p className="links"><a href={resume}>Download PDF</a><a href="#/resume" onClick={e=>{e.preventDefault();print()}}>Print</a></p>
     <Sec n="Education" t={education.school}><p className="prose">{education.degree}, {education.cgpa}. {education.where}, {education.when}.</p></Sec>
@@ -119,7 +121,7 @@ export default function App(){
       <div className="ring" ref={ring} aria-hidden="true"/>
       <Ink/>
       <header className="nav"><a href="#/" className="logo">{me.handle}</a>
-        <nav aria-label="Pages">{['projects','about','resume','contact'].map(s=><a key={s} href={`#/${s}`} aria-current={cur('/'+s)}>{s}</a>)}
+        <nav aria-label="Pages">{['projects','about','chess','resume','contact'].map(s=><a key={s} href={`#/${s}`} aria-current={cur('/'+s)}>{s}</a>)}
           <Scrub cls="nv" hour={hour} onChange={scrub} onAuto={auto}/>
           <button onClick={toggleTheme} aria-label={`Switch to ${theme==='dark'?'light':'dark'} mode`}>{theme==='dark'?'Light':'Dark'}</button></nav></header>
       <main id="main" tabIndex={-1} key={route} className="page">{page}</main>
