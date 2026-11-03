@@ -2,7 +2,7 @@
 export const me={
   name:'Varadraj',handle:'Vara715',
   tagline:'Backend and systems engineer who also builds with AI. I like distributed storage, correct ledgers and software that keeps working when things fail.',
-  links:[{l:'GitHub',h:'https://github.com/Vara715'}, {l:'Leetcode',h:'https://leetcode.com/u/Varadraj56/'}, {l:'Codechef',h:'https://www.codechef.com/users/varadraj56'}, {l:'LinkedIn',h:'https://www.linkedin.com/in/varadraj-patil-b36951338/'},{l:'Resume (PDF)',h:'resume.pdf'},{l:'Email',h:'mailto:pvaradraj2@gmail.com'}, {l:'chess.com',h:'https://www.chess.com/member/vir_45'}],
+  links:[{l:'GitHub',h:'https://github.com/Vara715'}, {l:'Leetcode',h:'https://leetcode.com/u/Varadraj56/'}, {l:'Codechef',h:'https://www.codechef.com/users/varadraj56'}, {l:'LinkedIn',h:'https://www.linkedin.com/in/varadraj-patil-b36951338/'},{l:'Resume (PDF)',h:'#/resume'},{l:'Email',h:'mailto:pvaradraj2@gmail.com'}, {l:'chess.com',h:'https://www.chess.com/member/vir_45'}],
   about:['I work across a lot of ground: web development, hackathons, DSA and competitive programming, open source, and learning AI. I also contribute in Rust and work on compilers.','My strongest pull is toward backend and systems, with AI alongside. TODO: add a short personal story and one human detail (a hobby, a running joke).']
 }
 export const projects=[

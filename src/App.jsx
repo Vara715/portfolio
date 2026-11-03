@@ -106,7 +106,7 @@ export default function App(){
     <Sec n="Skills" t="What I work with"><div className="crew">{Object.entries(skills).map(([g,it])=><div key={g}><h3>{g}</h3><ul>{it.map(s=><li key={s}>{s}</li>)}</ul></div>)}</div></Sec></section></div>
   else if(route==='/chess')page=<div className="wrap"><ChessPage/></div>
   else if(route==='/resume')page=<div className="wrap"><section><h1 className="h1s">Resume</h1>
-    <p className="links"><a href={resume}>Download PDF</a><a href="#/resume" onClick={e=>{e.preventDefault();print()}}>Print</a></p>
+    <p className="links"><a href={import.meta.env.BASE_URL+'varadraj_short_resume.pdf'} download>Download PDF</a><a href="#/resume" onClick={e=>{e.preventDefault();print()}}>Print</a></p>
     <Sec n="Education" t={education.school}><p className="prose">{education.degree}, {education.cgpa}. {education.where}, {education.when}.</p></Sec>
     <Sec n="Projects" t="Selected projects">{[...projects,{...also,how:[also.line]}].map(p=><div key={p.name} className="rs"><h3>{p.name}</h3><p className="where">{p.stack.join(', ')}</p><ul className="prose">{p.how.map(h=><li key={h}>{h}</li>)}</ul></div>)}</Sec>
     <Sec n="Skills" t="Technical skills">{Object.entries(skills).map(([g,it])=><p key={g} className="prose"><strong>{g}:</strong> {it.join(', ')}</p>)}</Sec>

@@ -8,7 +8,40 @@ const PATHS=['','about','projects','contact','resume','chess',...projects.map(p=
 const LS={'':['about/','projects/','resume/','chess/','contact/'],about:['story.md','education.md','skills.md'],projects:projects.map(p=>p.slug+'/'),contact:['links.md']}
 const SEC={chess:'chess',resume:'resume',about:'about',skills:'about',education:'about',projects:'projects',contact:'contact',home:''}
 const FORT=['There are only two hard things in computer science: cache invalidation and naming things. (Phil Karlton)','Premature optimization is the root of all evil. (Donald Knuth)','Make it work, make it right, make it fast. (Kent Beck)','Talk is cheap. Show me the code. (Linus Torvalds)','Simplicity is prerequisite for reliability. (Edsger Dijkstra)']
-const HELP=['cd <page>      go to a page: cd about, cd projects/p2p, cd .., cd ~','ls, pwd       look around','cat <project>  summary of a project (p2p, bank, github-bounty)','open <project> open a live demo; open github, open linkedin','neofetch      about me at a glance','run           play the runner game','theme, sound, calm  switch theme, toggle sound, calm mode','tree, cat resume, ping, history, clear, help','Some commands are hidden. Try your luck.']
+const HELP=[
+  'Navigation:',
+  '  cd <page>       go to page: cd about, cd projects/p2p, cd .., cd ~',
+  '  ls, pwd, tree   inspect files and directory structure',
+  '  exit            return to home page',
+  '  <page>          jump to: about, projects, resume, contact, chess, home',
+  ' ',
+  'Content & Info:',
+  '  cat <target>    summary of a project (p2p, bank) or file (education, resume)',
+  '  open <target>   open demo or link: open p2p, open github, open linkedin',
+  '  neofetch        about me at a glance',
+  '  whoami          current identity',
+  ' ',
+  'System & Settings:',
+  '  theme, calm     switch light/dark theme, toggle calm mode',
+  '  sound           toggle audio feedback',
+  '  run, game       play the runner mini-game',
+  '  clear, history  clear terminal, command history',
+  '  date, echo      current date and time, echo text',
+  '  ping            check site latency',
+  '  help            show this help menu',
+  ' ',
+  'Featured:',
+  '  gear5           activate Gear 5 mode',
+  '  cmatrix         matrix digital rain (Ctrl+C to exit)',
+  '  sl              steam locomotive animation',
+  '  cowsay [msg]    talking cow banner',
+  '  fortune         random programming quote',
+  ' ',
+  'Easter Eggs:',
+  '  ssh             remote login attempt',
+  '  sudo, rm        try privileged operations',
+  '  vim, :q         modal text editor'
+]
 
 export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
   const cwd=route.replace(/^\//,'')
@@ -54,7 +87,7 @@ export default function Terminal({route,nav,toggleTheme,toggleCalm,party,dock}){
       case 'pwd':return out('/home/vara715/portfolio'+(cwd?'/'+cwd:''))
       case 'cat':{const p=find(a);if(p)return out(p.name,p.line,'stack: '+p.stack.join(', '),'hardest part: '+p.hard)
         if(a==='education'||a==='education.md')return out(education.school,education.degree,`${education.cgpa}, ${education.when}`)
-        if(a==='resume'||a==='resume.pdf'){open(me.links.find(x=>x.l.startsWith('Resume')).h,'_blank','noopener');return out('Opening resume.pdf...')}
+        if(a==='resume'||a==='resume.pdf'){nav('/resume');return out('~/resume')}
         return out(`cat: ${a||''}: no such file`)}
       case 'open':{const p=find(a),l=me.links.find(x=>x.l.toLowerCase().startsWith((a||'').toLowerCase()))
         const u=p?p.demo:l?.h;if(u&&u!=='#'){open(u,'_blank','noopener');return out('Opening...')}return out('No link for that yet.')}
